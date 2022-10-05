@@ -157,7 +157,12 @@ def face_recognition(image):
                                         minNeighbors=3,
                                         minSize=(30, 30))
 
-    print("[INFO] Found {0} Faces!".format(len(faces)))
+    if len(faces) == 0:
+        print(f"[INFO] Found no Faces! Continuing without face-detection (normal image to image).")
+        raise ValueError("Found no Faces in input image.")
+
+    else: 
+        print(f"[INFO] Found {len(faces)} Faces!")
 
     x, y, w, h = faces[0, 0], faces[0, 1], faces[0, 2], faces[0, 3]
     ll = np.array([x, y])  # lower-left
@@ -185,27 +190,38 @@ Functions that conduct the image generation.
 # takes input image and masked image, combines it with styled prompt to return inpainting output image
 def avatar_generator(prompt, style, source_image, keep_face):
 
+    styled_prompt = add_style(prompt, style, avatar_styles_dict)
+
     if keep_face == True:
 
         # recognize face(s) in image and return filepaths to both original and masked versions
-        orig_image, masked_image = face_recognition(source_image)
+        try:
+            orig_image, masked_image = face_recognition(source_image)
 
-        styled_prompt = add_style(prompt, style, avatar_styles_dict)
+            # generate image
+            output_path = g.prompt2png(prompt     = styled_prompt,
+                                    outdir    = outdir,
+                                    init_img  = orig_image,
+                                    init_mask = masked_image,
+                                    cfg_scale = avatar_styles_dict[style][1],
+                                    strength  = avatar_styles_dict[style][2]
+                                    )[0][0]
+        
+        except ValueError:
+            source_image_resized = resize(source_image, width = 512, save_image= True)
 
-        # generate image
-        output_path = g.prompt2png(prompt     = styled_prompt,
-                                outdir    = outdir,
-                                init_img  = orig_image,
-                                init_mask = masked_image,
-                                cfg_scale = avatar_styles_dict[style][1],
-                                strength  = avatar_styles_dict[style][2]
-                                )[0][0]
+            # generate image
+            output_path = g.prompt2png(prompt     = styled_prompt,
+                                    outdir    = outdir,
+                                    init_img  = source_image_resized,
+                                    cfg_scale = avatar_styles_dict[style][1],
+                                    strength  = avatar_styles_dict[style][2]
+                                    )[0][0]
 
     elif keep_face == False:
 
         # resize the image to make sure that it's appropriate to use with following functions
         source_image_resized = resize(source_image, width = 512, save_image= True)
-        styled_prompt = add_style(prompt, style, avatar_styles_dict)
 
         # generate image
         output_path = g.prompt2png(prompt     = styled_prompt,
