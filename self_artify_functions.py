@@ -196,8 +196,8 @@ def avatar_generator(prompt, style, source_image, keep_face):
 
     if keep_face == True:
 
-        # recognize face(s) in image and return filepaths to both original and masked versions
         try:
+            # recognize face(s) in image and return filepaths to both original and masked versions
             orig_image, masked_image = face_recognition(source_image)
 
             # generate image
@@ -245,17 +245,30 @@ def avatar_generator_advanced(prompt, source_image, keep_face, cfg_scale, streng
 
     if keep_face == True:
 
-        # recognize face(s) in image and return filepaths to both original and masked versions
-        orig_image, masked_image = face_recognition(source_image)
+        try:
+            # recognize face(s) in image and return filepaths to both original and masked versions
+            orig_image, masked_image = face_recognition(source_image)
 
-        # generate image
-        output_path = g.prompt2png(prompt     = prompt,
-                                outdir    = outdir,
-                                init_img  = orig_image,
-                                init_mask = masked_image,
-                                cfg_scale = cfg_scale,
-                                strength  = strength
-                                )[0][0]
+            # generate image
+            output_path = g.prompt2png(prompt     = prompt,
+                                    outdir    = outdir,
+                                    init_img  = orig_image,
+                                    init_mask = masked_image,
+                                    cfg_scale = cfg_scale,
+                                    strength  = strength
+                                    )[0][0]
+
+        except ValueError:
+            source_image_resized = resize(source_image, width = 512, save_image= True)
+
+            # generate image
+            output_path = g.prompt2png(prompt     = prompt,
+                                    outdir    = outdir,
+                                    init_img  = source_image_resized,
+                                    cfg_scale = cfg_scale,
+                                    strength  = strength
+                                    )[0][0]
+
     
     elif keep_face == False:
 
@@ -276,6 +289,7 @@ def avatar_generator_advanced(prompt, source_image, keep_face, cfg_scale, streng
         torch.cuda.empty_cache()
 
     return output_path, output_path
+
 
 # function that returns a movie poster based on movie title and stylechoice
 def poster_generator(title, poster_styles):

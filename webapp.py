@@ -61,42 +61,41 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
     # 
     with gr.Tab("Avatar-Generator Advanced"):
         with gr.Row():
-
+            
             with gr.Column():
                 prompt = gr.Textbox(label= "Prompt")
-
-            with gr.Column():
                 keep_face = gr.Checkbox(label= "Keep the original face in the generated image.")
+                
                 cfg_scale = gr.Slider(minimum = 2,
                                     maximum = 25,
                                     value = 7.5,
                                     step = 0.5,
                                     label= "CFG-Scale (lower values give the algorithm more freedom")
+                
                 strength = gr.Slider(minimum = 0.15,
                                     maximum = 0.99,
                                     value = 0.5,
                                     step = 0.025,
                                     label= "Strength")
 
-        with gr.Row():
-            with gr.Column():
                 input_image = gr.Image(
                     type= "filepath",
                     label= "Your Image"
                 )
 
                 transform_button = gr.Button("Create Avatar")
-                transformed_image_path = gr.File(label= "Download Avatar")
-
+                
             with gr.Column():
-                transformed_image = gr.Image(label= "Avatar")
-            
+                transformed_image = gr.Image(label= "Avatar")    
+                transformed_image_path = gr.File(label= "Download Avatar")
+                    
+                
 
-    transform_button.click( fn= func.avatar_generator_advanced, 
-                            inputs = [prompt, input_image, keep_face, cfg_scale, strength], 
-                            outputs = [transformed_image, transformed_image_path],
-                            queue = True
-                            )
+        transform_button.click( fn= func.avatar_generator_advanced, 
+                                inputs = [prompt, input_image, keep_face, cfg_scale, strength], 
+                                outputs = [transformed_image, transformed_image_path],
+                                queue = True
+                                )
     
 
     #
