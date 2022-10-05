@@ -1,7 +1,7 @@
 <h1 align='center'><b>Welcome to Self-Artify</b></h1>
 
 <p align='center'>
-<img src="https://raw.githubusercontent.com/tobiasaurer/self-artify/main/docs/assets/self-artifiy_logo_small.png"/>
+<img src="docs/assets/self-artifiy_logo_small.png"/>
 </p>
 
 
