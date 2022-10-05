@@ -193,3 +193,6 @@ src/src/gfpgan/experiments/pretrained_models/GFPGANv1.3.pth
 
 # image processing
 facedetection/
+
+#
+__pycache__
