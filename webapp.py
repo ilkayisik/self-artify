@@ -20,8 +20,9 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
     )
     
     
+
     #
-    # Avatar Generator Tab
+    # Avatar Generator Tab 
     # 
     with gr.Tab("Avatar-Generator"):
         with gr.Row():
@@ -34,21 +35,18 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
                     type= "value"
                 )
 
-            with gr.Column():
                 keep_face = gr.Checkbox(label= "Keep the original face in the generated image.")
 
-        with gr.Row():
-            with gr.Column():
                 input_image = gr.Image(
-                    type= "filepath",
-                    label= "Your Image"
-                )
+                        type= "filepath",
+                        label= "Your Image"
+                    )
 
                 transform_button = gr.Button("Create Avatar")
-                transformed_image_path = gr.File(label= "Download Avatar")
 
             with gr.Column():
                 transformed_image = gr.Image(label= "Avatar")
+                transformed_image_path = gr.File(label= "Download Avatar")
 
 
     transform_button.click( fn= func.avatar_generator, 
@@ -59,7 +57,7 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
 
 
     #
-    # Testing Avatar Generator Tab
+    # Avatar-Generator Advanced Tab
     # 
     with gr.Tab("Avatar-Generator Advanced"):
         with gr.Row():
@@ -102,7 +100,7 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
     
 
     #
-    # Poster generator tab
+    # Movie-Poster generator tab
     #
     with gr.Tab("Movie-Poster Generator"):
         
