@@ -190,3 +190,6 @@ checkpoints
 # model files
 models/ldm/stable-diffusion-v1/model.ckpt
 src/src/gfpgan/experiments/pretrained_models/GFPGANv1.3.pth
+
+# image processing
+facedetection/
