@@ -16,7 +16,7 @@ g = Generate(
         )
 
 # preload model so that first image-generation happens as quickly as subsequent ones
-# g.load_model()
+g.load_model()
 
 
 cwd = os.getcwd()
