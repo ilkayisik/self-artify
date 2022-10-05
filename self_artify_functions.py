@@ -4,6 +4,7 @@ import  os
 import  numpy as np
 import  cv2
 import torch
+import re
 
 from    ldm.generate import Generate
 from    PIL import Image
@@ -18,10 +19,8 @@ g = Generate(
 # preload model so that first image-generation happens as quickly as subsequent ones
 g.load_model()
 
-
 cwd = os.getcwd()
 outdir = os.path.join(cwd, 'outputs', 'img-samples')
-
 
 '''
 In this section the styles that users can pick are defined. 
@@ -33,12 +32,12 @@ For avatar styles the dictionary values are ordered as follows:
 poster_styles_dict = {
     "Anime":            "anime, oil painting, high resolution, cottagecore, ghibli inspired, 4k",
     "Science-Fiction":  "science-fiction, award winning art by vincent di fate and david hardy",
-    "Romantic":         "romance, romantic, couple, kissing, love, extremely realistic, high quality, amazing lighting,",
+    "Romantic":         "romance, romantic, couple, kissing, love, extremely realistic, high quality",
     "Superheroes":      "clear portrait of a superhero concept, background hyper detailed, character concept, full body, dynamic pose, intricate, highly detailed, artstation, concept art, smooth, sharp focus, illustration, art by artgerm and greg rutkowski and alphonse mucha",
     "Horror":           "horror, scary, dark, dangerous, brutal, creepy lighting, high quality, very detailed",
     "Fantasy":          "fantasy vivid colors, high quality, excellent composition, 4k, detailed, trending in artstation",
     "Steampunk":        "steampunk, 4k, deatailed, trending in artstation, fantasy vivid colors",
-    "Animals":          "cute and adorable animals, wearing coat and suit, steampunk, lantern, anthromorphic, Jean paptiste monge, oil painting"
+    "Cute":             "cute and adorable animals, wearing coat and suit, steampunk, lantern, anthromorphic, Jean paptiste monge, oil painting"
 }
 
 # creates the list that is used for dropdown menu in gradio interface
@@ -48,16 +47,18 @@ poster_styles = list(poster_styles_dict.keys())
 # avatar-generator style options
 avatar_styles_dict = {
     "Elf":              ["elf in vibrant fantasy forest, beautiful lighting, high quality, oil painting, art by ruan jia", 12, 0.5],
-    "Elf_02":           ["A fantasy portrait of a winter elf, semi - realism, very beautiful, high quality, digital art, trending on artstation", 20, 0.5],
-    "Orc":              ["orc from lord of the rings on the battlefield in mordor, dark lighting, high quality, oil painting, art by ruan jia", 12, 0.5],
-    "Orc_02":           ["realistic render portrait of an orc with intricate armor , intricate, dystopian toy, sci-fi, extremely detailed, digital painting, sculpted in zbrush, artstation, concept art, smooth, sharp focus, illustration, chiaroscuro lighting, golden ratio, incredible art by artgerm and greg rutkowski and alphonse mucha and simon stalenhagrealistic render portrait of an orc with intricate armor , intricate, dystopian toy, sci-fi, extremely detailed, digital painting, sculpted in zbrush, artstation, concept art, smooth, sharp focus, illustration, chiaroscuro lighting, golden ratio, incredible art by artgerm and greg rutkowski and alphonse mucha and simon stalenhag", 12, 0.5],
+    "Winter Elf":       ["A fantasy portrait of a winter elf, semi - realism, very beautiful, high quality, digital art, trending on artstation", 20, 0.5],
+    "Orc (Lord of the Rings)":  ["orc from lord of the rings on the battlefield in mordor, dark lighting, high quality, oil painting, art by ruan jia", 12, 0.5],
+    "Orc (futuristic)": ["realistic render portrait of an orc with intricate armor , intricate, dystopian toy, sci-fi, extremely detailed, digital painting, sculpted in zbrush, artstation, concept art, smooth, sharp focus, illustration, chiaroscuro lighting, golden ratio, incredible art by artgerm and greg rutkowski and alphonse mucha and simon stalenhagrealistic render portrait of an orc with intricate armor , intricate, dystopian toy, sci-fi, extremely detailed, digital painting, sculpted in zbrush, artstation, concept art, smooth, sharp focus, illustration, chiaroscuro lighting, golden ratio, incredible art by artgerm and greg rutkowski and alphonse mucha and simon stalenhag", 12, 0.5],
     "Gorillaz":         ["gorillaz character, art by Jamie Hewlett, extremely detailed, cartoon style, high quality", 12, 0.5],
     "Knight":           ["front view portrait of a a bruised knight with a shield and heavy armor, epic forest background, fantasy, intricate, headshot, highly detailed, digital painting, artstation, concept art, sharp focus, cinematic lighting, illustration, art by artgerm and greg rutkowski, alphonse mucha, cgsociety", 20, 0.5],
-    "Anime":            ["very cute loli knocking in a glass cabinet in street | very very anime!!!, fine - face, audrey plaza, realistic shaded perfect face, fine details. anime. very strong realistic shaded lighting poster by ilya kuvshinov katsuhiro otomo ghost, magali villeneuve, artgerm, jeremy lipkin and michael garmash and rob rey", 20, 0.5],
+    "Anime":            ["very very anime!!!, fine - face, aubrey plaza, realistic shaded perfect face, fine details. anime. very strong realistic shaded lighting poster by ilya kuvshinov katsuhiro otomo ghost, magali villeneuve, artgerm, jeremy lipkin and michael garmash and rob rey", 20, 0.5],
     "Fairy":            ["fairy princess, highly detailed, d & d, fantasy, highly detailed, digital painting, trending on artstation, concept art, sharp focus, illustration, art by artgerm and greg rutkowski and magali villeneuve", 12, 0.5],
     "Goth":             ["beautiful digital painting of a stylish goth socialite forest with high detail, real life skin, freckles, 8 k, stunning detail, works by artgerm, greg rutkowski and alphonse mucha, unreal engine 5, 4 k uhd ", 20, 0.5],
     
 }
+# very cute loli knocking in a glass cabinet in street | 
+
 
 # creates the list that is used for dropdown menu in gradio interface
 avatar_styles = list(avatar_styles_dict.keys())
@@ -73,6 +74,23 @@ def add_style(prompt, style, styles_dict):
 
 def add_movieposter_style(title, style, styles_dict):
     return title + ", movie-poster, " + styles_dict[style]
+
+def delete_output(tmp_file_object):
+    # extract path to tmp file and get the tail
+    tmp_filepath = getattr(tmp_file_object, 'name')
+    tail = os.path.split(tmp_filepath)[1]
+
+    # filter out only the identifying numbers between the two dots
+    file_name_regex = re.compile(R".*\.(\d*)\..*")
+    regex_result = file_name_regex.search(tail)
+    file_ending = regex_result.group(1) + ".png"
+    
+    # find the correct file in outdir and delete it
+    for file in os.listdir(outdir):
+        if file.endswith(file_ending):
+            full_path = os.path.join(outdir, file)
+            os.remove(full_path)
+
 
 '''
 Functions for image preprocessing.
@@ -190,7 +208,7 @@ Functions that conduct the image generation.
 '''
 
 # takes input image and masked image, combines it with styled prompt to return inpainting output image
-def avatar_generator(prompt, style, source_image, keep_face):
+def avatar_generator(prompt, style, source_image, keep_face, delete_input):
 
     styled_prompt = add_style(prompt, style, avatar_styles_dict)
 
@@ -208,7 +226,7 @@ def avatar_generator(prompt, style, source_image, keep_face):
                                     cfg_scale = avatar_styles_dict[style][1],
                                     strength  = avatar_styles_dict[style][2]
                                     )[0][0]
-        
+
         except ValueError:
             source_image_resized = resize(source_image, width = 512, save_image= True)
 
@@ -232,7 +250,16 @@ def avatar_generator(prompt, style, source_image, keep_face):
                                 cfg_scale = avatar_styles_dict[style][1],
                                 strength  = avatar_styles_dict[style][2]
                                 )[0][0]
-    
+
+    # delete image files of user
+    if delete_input == True:
+        if 'source_image_resized' in locals():
+            os.remove(source_image_resized)
+        if 'orig_image' in locals():
+            os.remove(orig_image)
+        if 'masked_image' in locals():
+            os.remove(masked_image)
+
     # delete GPU cache to free up VRAM for next generations
     with torch.no_grad():
         torch.cuda.empty_cache()
@@ -241,7 +268,7 @@ def avatar_generator(prompt, style, source_image, keep_face):
 
 
 # takes input image and masked image, combines it with styled prompt to return inpainting output image
-def avatar_generator_advanced(prompt, source_image, keep_face, cfg_scale, strength):
+def avatar_generator_advanced(prompt, source_image, keep_face, cfg_scale, strength, delete_input):
 
     if keep_face == True:
 
@@ -269,7 +296,6 @@ def avatar_generator_advanced(prompt, source_image, keep_face, cfg_scale, streng
                                     strength  = strength
                                     )[0][0]
 
-    
     elif keep_face == False:
 
         # resize the image to make sure that it's appropriate to use with following functions
@@ -283,6 +309,14 @@ def avatar_generator_advanced(prompt, source_image, keep_face, cfg_scale, streng
                                 strength  = strength
                                 )[0][0]
     
+    # delete image files of user
+    if delete_input == True:
+        if 'source_image_resized' in locals():
+            os.remove(source_image_resized)
+        if 'orig_image' in locals():
+            os.remove(orig_image)
+        if 'masked_image' in locals():
+            os.remove(masked_image)
 
     # delete GPU cache to free up VRAM for next generations
     with torch.no_grad():
