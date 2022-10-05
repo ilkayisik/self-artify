@@ -1,6 +1,6 @@
 import  os
 import gradio as gr
-import functions as func
+import self_artify_functions as func
 
 
 """
