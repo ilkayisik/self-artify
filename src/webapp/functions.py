@@ -15,11 +15,13 @@ g = Generate(
         steps = 50
         )
 
+# preload model so that first image-generation happens as quickly as subsequent ones
 g.load_model()
 
 
 cwd = os.getcwd()
 outdir = os.path.join(cwd, 'outputs', 'img-samples')
+
 
 '''
 In this section the styles that users can pick are defined. 
@@ -27,8 +29,7 @@ For avatar styles the dictionary values are ordered as follows:
 [prompt, cfg scale, strength]
 '''
 
-
-# includes the prompts for different possible styles the user can choose from for movie poster generator
+# movie-poster generator style options
 poster_styles_dict = {
     "Anime":            "anime, oil painting, high resolution, cottagecore, ghibli inspired, 4k",
     "Science-Fiction":  "science-fiction, award winning art by vincent di fate and david hardy",
@@ -40,11 +41,11 @@ poster_styles_dict = {
     "Animals":          "cute and adorable animals, wearing coat and suit, steampunk, lantern, anthromorphic, Jean paptiste monge, oil painting"
 }
 
-# list of styles the user can choose from (will be updated to just take the keys of the dictionary for simplicity)
+# creates the list that is used for dropdown menu in gradio interface
 poster_styles = list(poster_styles_dict.keys())
 
 
-# avatar styles
+# avatar-generator style options
 avatar_styles_dict = {
     "Elf":              ["elf in vibrant fantasy forest, beautiful lighting, high quality, oil painting, art by ruan jia", 12, 0.5],
     "Elf_02":           ["A fantasy portrait of a winter elf, semi - realism, very beautiful, high quality, digital art, trending on artstation", 20, 0.5],
@@ -58,7 +59,7 @@ avatar_styles_dict = {
     
 }
 
-# list of styles the user can choose from 
+# creates the list that is used for dropdown menu in gradio interface
 avatar_styles = list(avatar_styles_dict.keys())
 
 
@@ -129,7 +130,7 @@ def resize(f, width=None,height=None, save_image = None):
 
 def face_recognition(image):
     
-    dirname = R"C:\Users\tobia\Documents\Coding\projects\stable_diffusion\InvokeAI\face_detection"
+    dirname = os.path.join(cwd, 'facedetection')
 
     width = 512 # width of the image
 
@@ -278,4 +279,3 @@ def poster_generator(title, poster_styles):
         torch.cuda.empty_cache()
 
     return output_path, output_path
-
