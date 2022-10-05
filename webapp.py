@@ -14,6 +14,9 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
     gr.Markdown(
         """
         # Welcome to Self-Artify
+        <p align='center'>
+        <img src="docs/assets/self-artifiy_logo_small.png"/>
+        </p>
         ## Choose what you want to be!
         """
     )
