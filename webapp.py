@@ -36,10 +36,6 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
                 )
 
                 keep_face = gr.Checkbox(label= "Keep the original face in the generated image.")
-                gr.Textbox(value= "Note: If no face is detected in your image, avatar generation will proceed anyhow but your face will change.",
-                            interactive= False,
-                            show_label= False
-                            )
 
                 input_image = gr.Image(
                         type= "filepath",

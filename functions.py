@@ -131,6 +131,8 @@ def resize(f, width=None,height=None, save_image = None):
 def face_recognition(image):
     
     dirname = os.path.join(cwd, 'facedetection')
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
 
     width = 512 # width of the image
 
