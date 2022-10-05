@@ -175,7 +175,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-src
+# src
 **/__pycache__/
 outputs
 
@@ -186,3 +186,7 @@ testtube
 checkpoints
 # If it's a Mac
 .DS_Store
+
+# model files
+models/ldm/stable-diffusion-v1/model.ckpt
+src/src/gfpgan/experiments/pretrained_models/GFPGANv1.3.pth
