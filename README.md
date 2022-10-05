@@ -1,7 +1,7 @@
 <h1 align='center'><b>Welcome to Self-Artify</b></h1>
 
 <p align='center'>
-<img src="docs/assets/self-artifiy_logo_small.png"/>
+<img src="docs/assets/self-artify_logo_small"/>
 </p>
 
 
