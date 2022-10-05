@@ -1,2 +1,8 @@
-##this is a test file
-### will replace the original readme once it's completed
+# Welcome to Self-Artify!
+
+## Fork from Invoke-AI
+
+Follow the installation from Invoke AI https://github.com/invoke-ai/InvokeAI/blob/main/README.md
+
+## Our app 
+-- Create Avatar
