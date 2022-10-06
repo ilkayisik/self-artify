@@ -9,10 +9,6 @@ Further separated into different tabs that include the offered functionalities.
 """
 
 
-def print_path(obj):
-    print(getattr(obj, 'name'))
-
-
 with gr.Blocks(css=".gradio-container {background-image: url('file=https://images.unsplash.com/photo-1545231097-cbd796f1d95f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2190&q=80"
                ) as demo:
 
