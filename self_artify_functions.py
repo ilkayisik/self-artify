@@ -57,7 +57,6 @@ avatar_styles_dict = {
     "Goth":             ["beautiful digital painting of a stylish goth socialite forest with high detail, real life skin, freckles, 8 k, stunning detail, works by artgerm, greg rutkowski and alphonse mucha, unreal engine 5, 4 k uhd ", 20, 0.5],
     
 }
-# very cute loli knocking in a glass cabinet in street | 
 
 
 # creates the list that is used for dropdown menu in gradio interface
