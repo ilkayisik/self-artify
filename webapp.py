@@ -8,8 +8,10 @@ Gradio Interface using Blocks objects.
 Further separated into different tabs that include the offered functionalities.
 """
 
+
 def print_path(obj):
     print(getattr(obj, 'name'))
+
 
 with gr.Blocks(css=".gradio-container {background-image: url('file=https://images.unsplash.com/photo-1545231097-cbd796f1d95f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2190&q=80"
                ) as demo:
@@ -20,6 +22,8 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
         <p align='center'>
         <img src="https://raw.githubusercontent.com/tobiasaurer/self-artify/main/docs/assets/self-artify_logo_small.png"/>
         </p>
+
+        
         ## Choose what you want to be!
         """
     )
@@ -40,7 +44,8 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
                 )
 
                 keep_face = gr.Checkbox(label="Keep the original face in the generated image.")
-                delete_input = gr.Checkbox(label="Delete my input image from the server after generating my avatar.")
+                delete_input = gr.Checkbox(
+                    label="Delete my input image from the server after generating my avatar.")
 
                 input_image = gr.Image(
                     type="filepath",
@@ -54,16 +59,15 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
                 transformed_image_path = gr.File(label="Download Avatar")
                 delete_button = gr.Button("Delete my avatar from the server")
 
-    transform_button.click(fn= func.avatar_generator,
+    transform_button.click(fn=func.avatar_generator,
                            inputs=[prompt, style, input_image, keep_face, delete_input],
                            outputs=[transformed_image, transformed_image_path],
                            queue=True
                            )
 
-    delete_button.click(fn=  func.delete_output,
-                        inputs= [transformed_image_path],
-                        outputs= [])
-
+    delete_button.click(fn=func.delete_output,
+                        inputs=[transformed_image_path],
+                        outputs=[])
 
     #
     # Avatar-Generator Advanced Tab
@@ -74,7 +78,8 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
             with gr.Column():
                 prompt = gr.Textbox(label="Prompt")
                 keep_face = gr.Checkbox(label="Keep the original face in the generated image.")
-                delete_input = gr.Checkbox(label="Delete my input image from the server after generating my avatar.")
+                delete_input = gr.Checkbox(
+                    label="Delete my input image from the server after generating my avatar.")
 
                 cfg_scale = gr.Slider(minimum=2,
                                       maximum=25,
@@ -101,15 +106,15 @@ with gr.Blocks(css=".gradio-container {background-image: url('file=https://image
                 delete_button = gr.Button("Delete my avatar from the server")
 
         transform_button.click(fn=func.avatar_generator_advanced,
-                               inputs=[prompt, input_image, keep_face, cfg_scale, strength, delete_input],
+                               inputs=[prompt, input_image, keep_face,
+                                       cfg_scale, strength, delete_input],
                                outputs=[transformed_image, transformed_image_path],
                                queue=True
                                )
 
-        delete_button.click(fn=  func.delete_output,
-                        inputs= [transformed_image_path],
-                        outputs= [])
-
+        delete_button.click(fn=func.delete_output,
+                            inputs=[transformed_image_path],
+                            outputs=[])
 
     #
     # Movie-Poster generator tab
