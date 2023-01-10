@@ -43,5 +43,10 @@ and runs on GPU cards with as little as 4 GB or RAM.
 
 To use our webapp we recommend following the [installation notes from invoke-ai](https://github.com/invoke-ai/InvokeAI#installation) 
 
+## Authors
+- [Tobias Aurer](https://github.com/tobiasaurer)
+- [Ilkay Isik](https://github.com/ilkayisik)
+
+Get in touch with us if you have any questions!
 
 
